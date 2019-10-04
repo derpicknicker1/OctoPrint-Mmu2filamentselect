@@ -6,14 +6,8 @@ This plugin shows a dialog to select the filament when a print on a Prusa printe
 
 You can select the filament which should be used in this dialog. So you don't have to go over to your printer to select the filament in the printers menu.
 
-The dialog will timeout after a given time (see [Configuration](configuration), default 30 seconds). Then everything will work as usual and you have to select the filament at your printers menu.
+The dialog will timeout after a given time (see [Configuration](#configuration), default 30 seconds). Then everything will work as usual and you have to select the filament at your printers menu.
 
-<<<<<<< HEAD
-
-## Screenshot
-
-=======
->>>>>>> 08359b60281e53a893680707f428f3aa3225426e
 <img src="https://raw.githubusercontent.com/derpicknicker1/OctoPrint-Mmu2filamentselect/pics/dialog.png"> 
 
 ## Setup
@@ -27,8 +21,4 @@ or manually using this URL:
 
 In the settings of this plugin you can set the timeout. If this timeout runs out after the dialog pops up, it will close the dialog automatically. 
 
-<<<<<<< HEAD
 <img src="https://raw.githubusercontent.com/derpicknicker1/OctoPrint-Mmu2filamentselect/pics/settings2.png"> 
-=======
-<img src="https://raw.githubusercontent.com/derpicknicker1/OctoPrint-Mmu2filamentselect/pics/settings2.png"> 
->>>>>>> 08359b60281e53a893680707f428f3aa3225426e
