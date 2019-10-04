@@ -100,8 +100,27 @@ class MMU2SelectPlugin(octoprint.plugin.TemplatePlugin, octoprint.plugin.Setting
 			
 			self._done_prompt("T" + str(choice))
 
+	#~ Update
+
+	def get_update_information(*args, **kwargs):
+		return dict(
+			updateplugindemo=dict(
+				displayName=self._plugin_name,
+				displayVersion=self._plugin_version,
+
+				type="github_release",
+				current=self._plugin_version,
+				user="derPicknicker1",
+				repo="OctoPrint-Mmu2filamentselect",
+
+				pip="https://github.com/derPicknicker1/OctoPrint-Mmu2filamentselect/archive/{target_version}.zip"
+			)
+		)
+
+
 __plugin_name__ = "Prusa MMU2 Select Filament"
 __plugin_implementation__ = MMU2SelectPlugin()
 __plugin_hooks__ = {
 	b"octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.gcode_queuing_handler
+	b"octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
 }
