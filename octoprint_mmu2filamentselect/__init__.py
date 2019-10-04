@@ -104,7 +104,7 @@ class MMU2SelectPlugin(octoprint.plugin.TemplatePlugin, octoprint.plugin.Setting
 
 	def get_update_information(*args, **kwargs):
 		return dict(
-			updateplugindemo=dict(
+			mmu2filamentselect=dict(
 				displayName=self._plugin_name,
 				displayVersion=self._plugin_version,
 
