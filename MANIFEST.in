@@ -1,0 +1,4 @@
+include README.md
+recursive-include octoprint_mmu2filamentselect/templates *
+recursive-include octoprint_mmu2filamentselect/translations *
+recursive-include octoprint_mmu2filamentselect/static *
