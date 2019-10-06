@@ -121,6 +121,6 @@ class MMU2SelectPlugin(octoprint.plugin.TemplatePlugin, octoprint.plugin.Setting
 __plugin_name__ = "Prusa MMU2 Select Filament"
 __plugin_implementation__ = MMU2SelectPlugin()
 __plugin_hooks__ = {
-	b"octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.gcode_queuing_handler
+	b"octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.gcode_queuing_handler,
 	b"octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
 }
