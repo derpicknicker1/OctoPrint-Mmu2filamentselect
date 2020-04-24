@@ -8,12 +8,15 @@ from octoprint.server import user_permission
 import flask
 from flask_babel import gettext
 
+
 class MMU2SelectPlugin(octoprint.plugin.TemplatePlugin, octoprint.plugin.SettingsPlugin, octoprint.plugin.SimpleApiPlugin, octoprint.plugin.AssetPlugin):
-	
+
 	def __init__(self):
 		self._active = False
 		self._timer = None
-		self._timeout = 0;
+		self._timeout = 0
+		self._txTriggered = False
+		self._selectedTool = None
 
 	def initialize(self):
 		self._timeout = self._settings.get([b"timeout"])
@@ -21,15 +24,26 @@ class MMU2SelectPlugin(octoprint.plugin.TemplatePlugin, octoprint.plugin.Setting
 	#~ queuing handling
 
 	def gcode_queuing_handler(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
-		if cmd != "Tx":
+		if not cmd.startswith("Tx") and not cmd.startswith("M109"):
 			return
 
 		if "mmu2Plugin:choose_filament_resend" in tags:
 			return
 
-		if self._printer.set_job_on_hold(True):
-			self._show_prompt()
-					
+		if cmd.startswith("M109"):
+			if self._selectedTool is not None and self._txTriggered:
+				tool_cmd = self._selectedTool
+				self._selectedTool = None
+				self._txTriggered = False
+				return[(cmd,),
+					(tool_cmd,)]
+			else:
+				return
+
+		if cmd.startswith("Tx"):
+			if self._printer.set_job_on_hold(True):
+				self._show_prompt()
+
 		return None,
 
 	#~ SettingsPlugin
@@ -72,13 +86,18 @@ class MMU2SelectPlugin(octoprint.plugin.TemplatePlugin, octoprint.plugin.Setting
 		self._plugin_manager.send_plugin_message(self._identifier, dict(action="show"))
 
 	def _timeout_prompt(self):
-		self._plugin_manager.send_plugin_message(self._identifier, dict(action="close"))
-		self._done_prompt("Tx", tags={"mmu2Plugin:choose_filament_resend"})
+		self._printer.commands("Tx", tags={"mmu2Plugin:choose_filament_resend"})
+		self._clean_up_prompt()
 
 	def _done_prompt(self, command, tags=set()):
+		self._selectedTool = command
+		self._txTriggered = True
+		self._clean_up_prompt()
+
+	def _clean_up_prompt(self):
 		self._timer.cancel()
 		self._active = False
-		self._printer.commands(command, tags=tags)
+		self._plugin_manager.send_plugin_message(self._identifier, dict(action="close"))
 		self._printer.set_job_on_hold(False)
 
 	#~ SimpleApiPlugin
@@ -97,7 +116,7 @@ class MMU2SelectPlugin(octoprint.plugin.TemplatePlugin, octoprint.plugin.Setting
 			choice = data["choice"]
 			if not isinstance(choice, int) or not choice < 5 or not choice >= 0:
 				return flask.abort(400, "{!r} is not a valid value for filament choice".format(choice+1))
-			
+
 			self._done_prompt("T" + str(choice))
 
 	#~ Update
